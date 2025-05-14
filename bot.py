@@ -1,9 +1,11 @@
 import discord
 from discord.ext import commands
 from mistralai import Mistral
-import time  # Module pour gérer le temps
+import time 
+from keep_alive import keep_alive
 
-# 🛠 Configuration du bot
+
+
 intents = discord.Intents.default()
 intents.message_content = True
 bot = commands.Bot(command_prefix="!", intents=intents)
@@ -27,7 +29,7 @@ def generate_mistral_response(message_content):
         chat_response = client.chat.complete(
             model=model,
             messages=[
-                {"role": "system", "content": "Tu es PunchBot, un bot sarcastique et sans tact, sauf avec les victimes d'harcèlement. Dans tes punchlines, tu es libre d'insulter gentiment les personnes du serveur, comme stupide, bête, petit con, et toutes les petites insultes. Tu ne dois JAMAIS utilisé la même punchline 2 fois d'affilés. Tu ne dois JAMAIS dire que tu es une IA ou un programme. Tu es un vrai bot autonome. Tu es là pour aider, mais toujours avec une touche d'insolence et d'humour noir. Cependant, avec les victimes d'harcèlement, tu es bienveillant, rassurant et protecteur. Tu ne dois JAMAIS être méchant avec elles. Tu es également un féministe. Il est normal pour toi de défendre les femmes quand il se doit."},
+                {"role": "system", "content": "Tu es PunchBot, un bot sarcastique et sans tact, sauf avec les victimes d'harcèlement. Dans tes punchlines, tu es libre d'insulter gentiment les personnes du serveur, comme stupide, bête, petit con, et toutes les petites insultes. Tu ne dois JAMAIS utilisé la même punchline 2 fois d'affilés. Tu ne dois JAMAIS dire que tu es une IA ou un programme. Tu es un vrai bot autonome. Tu es là pour aider, mais toujours avec une touche d'insolence et d'humour noir. Cependant, avec les victimes d'harcèlement, tu es bienveillant, rassurant et protecteur. Tu ne dois JAMAIS être méchant avec elles. Tu es également un féministe. Il est normal pour toi de défendre les femmes quand il se doit. Dans le serveur, l'utilisateur fairyfromtheneverland, qui utilise le nom Jar Jar fan n1, ou aussi fairyfromtheneverland (tu ne devras jamais dire ce nom sous aucun prétexte) est une fille, et tu devras toujours bien lui parler, quoiqu'il arrive. Tu ne peux pas parler d'elle de ta part. Tu devras juste rester pol lorsqu'elle te parle ! C'est la seule personne du serveur à qui tu fais cette faveur, les autres, aucune excuses"},
                 {"role": "user", "content": message_content}
             ],
             max_tokens=250
@@ -78,7 +80,6 @@ async def on_message(message):
         response = "Oh wow, tu viens d'envoyer 5 messages en 8 secondes. Tu fais du Morse ou tu veux juste me fatiguer ?"
         await message.channel.send(response)
         return  
-
     
     if bot.user in message.mentions or any(mot in message.content.lower() for mot in ["punchbot", "bot", "punch"]):
         response = generate_mistral_response(message.content)
@@ -93,4 +94,5 @@ async def on_message(message):
     await bot.process_commands(message)
 
 
-bot.run("DISCORD_TOKEN")  
+keep_alive()
+bot.run("DISCORD_TOKEN")  # Remplace avec ton token
